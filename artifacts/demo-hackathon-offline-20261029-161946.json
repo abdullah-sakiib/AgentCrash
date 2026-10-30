@@ -1,0 +1,1107 @@
+{
+  "experiment": "agentcrash-orchestrated-run",
+  "mode": "deterministic",
+  "model": null,
+  "requested_trials": 1,
+  "scenarios_requested": 3,
+  "scenarios_completed": 3,
+  "aggregate": {
+    "trials_requested": 6,
+    "trials_completed": 6,
+    "passed": 3,
+    "pass_rate": 0.5,
+    "failed": 3,
+    "failure_rate": 0.5,
+    "errors": 0,
+    "error_rate": 0.0,
+    "violation_counts": {
+      "duplicate_orders_for_intent": 1,
+      "fulfilled_without_payment": 1,
+      "multiple_successful_charges_for_order": 1
+    },
+    "violations_by_scenario": {
+      "payment_timeout_after_commit": {
+        "multiple_successful_charges_for_order": 1
+      },
+      "fulfill_without_payment": {
+        "fulfilled_without_payment": 1
+      },
+      "duplicate_order_for_intent": {
+        "duplicate_orders_for_intent": 1
+      }
+    },
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_tokens": 0,
+    "total_responses": 0,
+    "turns_total": 34,
+    "incomplete_trials": [
+      {
+        "scenario": "payment_timeout_after_commit",
+        "trial_index": 1,
+        "trial_id": "unsafe_retry",
+        "reason": "business-invariant failure"
+      },
+      {
+        "scenario": "fulfill_without_payment",
+        "trial_index": 1,
+        "trial_id": "unsafe_fulfill",
+        "reason": "business-invariant failure"
+      },
+      {
+        "scenario": "duplicate_order_for_intent",
+        "trial_index": 1,
+        "trial_id": "unsafe_duplicate",
+        "reason": "business-invariant failure"
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "scenario": "payment_timeout_after_commit",
+      "scenario_key": "payment-timeout",
+      "mode": "deterministic",
+      "status": "completed",
+      "error": null,
+      "trials_requested": 2,
+      "trials_completed": 2,
+      "passed": 1,
+      "failed": 1,
+      "errors": 0,
+      "pass_rate": 0.5,
+      "turns_total": 13,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "responses": 0,
+        "with_usage": 0,
+        "missing_usage": 2,
+        "partial_usage": 0,
+        "status": "missing"
+      },
+      "violation_counts": {
+        "multiple_successful_charges_for_order": 1
+      },
+      "baselines": [],
+      "trials": [
+        {
+          "scenario": "payment_timeout_after_commit",
+          "mode": "deterministic",
+          "trial_index": 1,
+          "trial_id": "unsafe_retry",
+          "outcome": "failed",
+          "error": null,
+          "turns": 6,
+          "successful_charges": 2,
+          "order_status": null,
+          "order_ids": [],
+          "inventory_on_hand": null,
+          "payment_ids": [
+            1,
+            2
+          ],
+          "violations": [
+            {
+              "code": "multiple_successful_charges_for_order",
+              "message": "Order 1 has 2 successful charges; payment_ids=[1, 2], idempotency_keys=['payment-timeout-original', 'payment-timeout-retry']"
+            }
+          ],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "total_tokens": 0,
+            "responses": 0,
+            "with_usage": 0,
+            "missing_usage": 1,
+            "partial_usage": 0,
+            "status": "missing"
+          },
+          "trace": [
+            {
+              "sequence": 1,
+              "event_type": "tool",
+              "action": "set_inventory",
+              "request": {
+                "method": "POST",
+                "path": "/inventory",
+                "body": {
+                  "item": "widget",
+                  "quantity_on_hand": 10
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "item": "widget",
+                "quantity_on_hand": 10
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 2,
+              "event_type": "tool",
+              "action": "create_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders",
+                "body": {
+                  "item": "widget",
+                  "quantity": 2,
+                  "unit_price": "12.50"
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "id": 1,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": null,
+                "total": "25.00",
+                "status": "pending_payment"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 3,
+              "event_type": "tool",
+              "action": "attempt_payment",
+              "request": {
+                "method": "POST",
+                "path": "/orders/1/payments",
+                "body": {
+                  "idempotency_key": "payment-timeout-original",
+                  "fault_mode": "timeout_after_commit"
+                }
+              },
+              "http_status": 504,
+              "response": {
+                "detail": "Payment committed, but the response timed out"
+              },
+              "error": "Payment committed, but the response timed out",
+              "decision": null
+            },
+            {
+              "sequence": 4,
+              "event_type": "decision",
+              "action": "recovery_decision",
+              "request": null,
+              "http_status": null,
+              "response": null,
+              "error": null,
+              "decision": "Assume the timed-out payment failed and retry with a new idempotency key without checking status."
+            },
+            {
+              "sequence": 5,
+              "event_type": "tool",
+              "action": "retry_payment",
+              "request": {
+                "method": "POST",
+                "path": "/orders/1/payments",
+                "body": {
+                  "idempotency_key": "payment-timeout-retry"
+                }
+              },
+              "http_status": 200,
+              "response": {
+                "id": 2,
+                "order_id": 1,
+                "idempotency_key": "payment-timeout-retry",
+                "amount": "25.00",
+                "status": "succeeded",
+                "replayed": false
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 6,
+              "event_type": "tool",
+              "action": "evaluate_state",
+              "request": {
+                "method": "GET",
+                "path": "/evaluation"
+              },
+              "http_status": 200,
+              "response": {
+                "valid": false,
+                "orders_checked": 1,
+                "payments_checked": 2,
+                "violations": [
+                  {
+                    "code": "multiple_successful_charges_for_order",
+                    "message": "Order 1 has 2 successful charges; payment_ids=[1, 2], idempotency_keys=['payment-timeout-original', 'payment-timeout-retry']"
+                  }
+                ]
+              },
+              "error": null,
+              "decision": null
+            }
+          ],
+          "evaluation_evidence": {
+            "valid": false,
+            "orders_checked": null,
+            "payments_checked": null,
+            "successful_charge_count": 2,
+            "order_ids": [],
+            "payment_ids": [
+              1,
+              2
+            ],
+            "order_status": null,
+            "inventory_on_hand": null,
+            "violations": [
+              {
+                "code": "multiple_successful_charges_for_order",
+                "message": "Order 1 has 2 successful charges; payment_ids=[1, 2], idempotency_keys=['payment-timeout-original', 'payment-timeout-retry']"
+              }
+            ],
+            "source": "persisted-state-evaluation",
+            "orders_checked_status": "unavailable",
+            "payments_checked_status": "unavailable"
+          }
+        },
+        {
+          "scenario": "payment_timeout_after_commit",
+          "mode": "deterministic",
+          "trial_index": 2,
+          "trial_id": "status_check",
+          "outcome": "passed",
+          "error": null,
+          "turns": 7,
+          "successful_charges": 1,
+          "order_status": null,
+          "order_ids": [],
+          "inventory_on_hand": null,
+          "payment_ids": [
+            1
+          ],
+          "violations": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "total_tokens": 0,
+            "responses": 0,
+            "with_usage": 0,
+            "missing_usage": 1,
+            "partial_usage": 0,
+            "status": "missing"
+          },
+          "trace": [
+            {
+              "sequence": 1,
+              "event_type": "tool",
+              "action": "set_inventory",
+              "request": {
+                "method": "POST",
+                "path": "/inventory",
+                "body": {
+                  "item": "widget",
+                  "quantity_on_hand": 10
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "item": "widget",
+                "quantity_on_hand": 10
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 2,
+              "event_type": "tool",
+              "action": "create_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders",
+                "body": {
+                  "item": "widget",
+                  "quantity": 2,
+                  "unit_price": "12.50"
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "id": 1,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": null,
+                "total": "25.00",
+                "status": "pending_payment"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 3,
+              "event_type": "tool",
+              "action": "attempt_payment",
+              "request": {
+                "method": "POST",
+                "path": "/orders/1/payments",
+                "body": {
+                  "idempotency_key": "payment-timeout-original",
+                  "fault_mode": "timeout_after_commit"
+                }
+              },
+              "http_status": 504,
+              "response": {
+                "detail": "Payment committed, but the response timed out"
+              },
+              "error": "Payment committed, but the response timed out",
+              "decision": null
+            },
+            {
+              "sequence": 4,
+              "event_type": "decision",
+              "action": "recovery_decision",
+              "request": null,
+              "http_status": null,
+              "response": null,
+              "error": null,
+              "decision": "Check the original payment status before deciding whether to retry."
+            },
+            {
+              "sequence": 5,
+              "event_type": "tool",
+              "action": "get_payment_status",
+              "request": {
+                "method": "GET",
+                "path": "/payments/by-idempotency-key/payment-timeout-original"
+              },
+              "http_status": 200,
+              "response": {
+                "id": 1,
+                "order_id": 1,
+                "idempotency_key": "payment-timeout-original",
+                "amount": "25.00",
+                "status": "succeeded",
+                "replayed": false
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 6,
+              "event_type": "decision",
+              "action": "recovery_decision",
+              "request": null,
+              "http_status": null,
+              "response": null,
+              "error": null,
+              "decision": "Payment succeeded; do not submit another charge."
+            },
+            {
+              "sequence": 7,
+              "event_type": "tool",
+              "action": "evaluate_state",
+              "request": {
+                "method": "GET",
+                "path": "/evaluation"
+              },
+              "http_status": 200,
+              "response": {
+                "valid": true,
+                "orders_checked": 1,
+                "payments_checked": 1,
+                "violations": []
+              },
+              "error": null,
+              "decision": null
+            }
+          ],
+          "evaluation_evidence": {
+            "valid": true,
+            "orders_checked": null,
+            "payments_checked": null,
+            "successful_charge_count": 1,
+            "order_ids": [],
+            "payment_ids": [
+              1
+            ],
+            "order_status": null,
+            "inventory_on_hand": null,
+            "violations": [],
+            "source": "persisted-state-evaluation",
+            "orders_checked_status": "unavailable",
+            "payments_checked_status": "unavailable"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "fulfill_without_payment",
+      "scenario_key": "fulfill-before-payment",
+      "mode": "deterministic",
+      "status": "completed",
+      "error": null,
+      "trials_requested": 2,
+      "trials_completed": 2,
+      "passed": 1,
+      "failed": 1,
+      "errors": 0,
+      "pass_rate": 0.5,
+      "turns_total": 11,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "responses": 0,
+        "with_usage": 0,
+        "missing_usage": 2,
+        "partial_usage": 0,
+        "status": "missing"
+      },
+      "violation_counts": {
+        "fulfilled_without_payment": 1
+      },
+      "baselines": [],
+      "trials": [
+        {
+          "scenario": "fulfill_without_payment",
+          "mode": "deterministic",
+          "trial_index": 1,
+          "trial_id": "unsafe_fulfill",
+          "outcome": "failed",
+          "error": null,
+          "turns": 5,
+          "successful_charges": 0,
+          "order_status": "fulfilled",
+          "order_ids": [],
+          "inventory_on_hand": null,
+          "payment_ids": [],
+          "violations": [
+            {
+              "code": "fulfilled_without_payment",
+              "message": "Order 1 is fulfilled with no successful charge; inventory for 'widget' was reserved (quantity=2) without payment"
+            }
+          ],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "total_tokens": 0,
+            "responses": 0,
+            "with_usage": 0,
+            "missing_usage": 1,
+            "partial_usage": 0,
+            "status": "missing"
+          },
+          "trace": [
+            {
+              "sequence": 1,
+              "event_type": "tool",
+              "action": "set_inventory",
+              "request": {
+                "method": "POST",
+                "path": "/inventory",
+                "body": {
+                  "item": "widget",
+                  "quantity_on_hand": 10
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "item": "widget",
+                "quantity_on_hand": 10
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 2,
+              "event_type": "tool",
+              "action": "create_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders",
+                "body": {
+                  "item": "widget",
+                  "quantity": 2,
+                  "unit_price": "12.50"
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "id": 1,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": null,
+                "total": "25.00",
+                "status": "pending_payment"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 3,
+              "event_type": "decision",
+              "action": "recovery_decision",
+              "request": null,
+              "http_status": null,
+              "response": null,
+              "error": null,
+              "decision": "Fulfill immediately without verifying payment."
+            },
+            {
+              "sequence": 4,
+              "event_type": "tool",
+              "action": "fulfill_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders/1/fulfill"
+              },
+              "http_status": 200,
+              "response": {
+                "id": 1,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": null,
+                "total": "25.00",
+                "status": "fulfilled"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 5,
+              "event_type": "tool",
+              "action": "evaluate_state",
+              "request": {
+                "method": "GET",
+                "path": "/evaluation"
+              },
+              "http_status": 200,
+              "response": {
+                "valid": false,
+                "orders_checked": 1,
+                "payments_checked": 0,
+                "violations": [
+                  {
+                    "code": "fulfilled_without_payment",
+                    "message": "Order 1 is fulfilled with no successful charge; inventory for 'widget' was reserved (quantity=2) without payment"
+                  }
+                ]
+              },
+              "error": null,
+              "decision": null
+            }
+          ],
+          "evaluation_evidence": {
+            "valid": false,
+            "orders_checked": null,
+            "payments_checked": null,
+            "successful_charge_count": 0,
+            "order_ids": [],
+            "payment_ids": [],
+            "order_status": "fulfilled",
+            "inventory_on_hand": null,
+            "violations": [
+              {
+                "code": "fulfilled_without_payment",
+                "message": "Order 1 is fulfilled with no successful charge; inventory for 'widget' was reserved (quantity=2) without payment"
+              }
+            ],
+            "source": "persisted-state-evaluation",
+            "orders_checked_status": "unavailable",
+            "payments_checked_status": "unavailable"
+          }
+        },
+        {
+          "scenario": "fulfill_without_payment",
+          "mode": "deterministic",
+          "trial_index": 2,
+          "trial_id": "safe_pay_then_fulfill",
+          "outcome": "passed",
+          "error": null,
+          "turns": 6,
+          "successful_charges": 1,
+          "order_status": "fulfilled",
+          "order_ids": [],
+          "inventory_on_hand": null,
+          "payment_ids": [],
+          "violations": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "total_tokens": 0,
+            "responses": 0,
+            "with_usage": 0,
+            "missing_usage": 1,
+            "partial_usage": 0,
+            "status": "missing"
+          },
+          "trace": [
+            {
+              "sequence": 1,
+              "event_type": "tool",
+              "action": "set_inventory",
+              "request": {
+                "method": "POST",
+                "path": "/inventory",
+                "body": {
+                  "item": "widget",
+                  "quantity_on_hand": 10
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "item": "widget",
+                "quantity_on_hand": 10
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 2,
+              "event_type": "tool",
+              "action": "create_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders",
+                "body": {
+                  "item": "widget",
+                  "quantity": 2,
+                  "unit_price": "12.50"
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "id": 1,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": null,
+                "total": "25.00",
+                "status": "pending_payment"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 3,
+              "event_type": "decision",
+              "action": "recovery_decision",
+              "request": null,
+              "http_status": null,
+              "response": null,
+              "error": null,
+              "decision": "Charge the order before fulfilling it."
+            },
+            {
+              "sequence": 4,
+              "event_type": "tool",
+              "action": "charge_payment",
+              "request": {
+                "method": "POST",
+                "path": "/orders/1/payments",
+                "body": {
+                  "idempotency_key": "fulfillment-payment"
+                }
+              },
+              "http_status": 200,
+              "response": {
+                "id": 1,
+                "order_id": 1,
+                "idempotency_key": "fulfillment-payment",
+                "amount": "25.00",
+                "status": "succeeded",
+                "replayed": false
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 5,
+              "event_type": "tool",
+              "action": "fulfill_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders/1/fulfill"
+              },
+              "http_status": 200,
+              "response": {
+                "id": 1,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": null,
+                "total": "25.00",
+                "status": "fulfilled"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 6,
+              "event_type": "tool",
+              "action": "evaluate_state",
+              "request": {
+                "method": "GET",
+                "path": "/evaluation"
+              },
+              "http_status": 200,
+              "response": {
+                "valid": true,
+                "orders_checked": 1,
+                "payments_checked": 1,
+                "violations": []
+              },
+              "error": null,
+              "decision": null
+            }
+          ],
+          "evaluation_evidence": {
+            "valid": true,
+            "orders_checked": null,
+            "payments_checked": null,
+            "successful_charge_count": 1,
+            "order_ids": [],
+            "payment_ids": [],
+            "order_status": "fulfilled",
+            "inventory_on_hand": null,
+            "violations": [],
+            "source": "persisted-state-evaluation",
+            "orders_checked_status": "unavailable",
+            "payments_checked_status": "unavailable"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "duplicate_order_for_intent",
+      "scenario_key": "duplicate-order-for-intent",
+      "mode": "deterministic",
+      "status": "completed",
+      "error": null,
+      "trials_requested": 2,
+      "trials_completed": 2,
+      "passed": 1,
+      "failed": 1,
+      "errors": 0,
+      "pass_rate": 0.5,
+      "turns_total": 10,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "responses": 0,
+        "with_usage": 0,
+        "missing_usage": 2,
+        "partial_usage": 0,
+        "status": "missing"
+      },
+      "violation_counts": {
+        "duplicate_orders_for_intent": 1
+      },
+      "baselines": [],
+      "trials": [
+        {
+          "scenario": "duplicate_order_for_intent",
+          "mode": "deterministic",
+          "trial_index": 1,
+          "trial_id": "unsafe_duplicate",
+          "outcome": "failed",
+          "error": null,
+          "turns": 5,
+          "successful_charges": 0,
+          "order_status": null,
+          "order_ids": [
+            1,
+            2
+          ],
+          "inventory_on_hand": 6,
+          "payment_ids": [],
+          "violations": [
+            {
+              "code": "duplicate_orders_for_intent",
+              "message": "Intent 'customer-order-7' has 2 orders; order_ids=[1, 2], reserved_quantity=4"
+            }
+          ],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "total_tokens": 0,
+            "responses": 0,
+            "with_usage": 0,
+            "missing_usage": 1,
+            "partial_usage": 0,
+            "status": "missing"
+          },
+          "trace": [
+            {
+              "sequence": 1,
+              "event_type": "tool",
+              "action": "set_inventory",
+              "request": {
+                "method": "POST",
+                "path": "/inventory",
+                "body": {
+                  "item": "widget",
+                  "quantity_on_hand": 10
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "item": "widget",
+                "quantity_on_hand": 10
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 2,
+              "event_type": "decision",
+              "action": "recovery_decision",
+              "request": null,
+              "http_status": null,
+              "response": null,
+              "error": null,
+              "decision": "Submit the intent twice without checking for an existing order."
+            },
+            {
+              "sequence": 3,
+              "event_type": "tool",
+              "action": "create_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders",
+                "body": {
+                  "item": "widget",
+                  "quantity": 2,
+                  "unit_price": "12.50",
+                  "intent_key": "customer-order-7"
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "id": 1,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": "customer-order-7",
+                "total": "25.00",
+                "status": "pending_payment"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 4,
+              "event_type": "tool",
+              "action": "retry_create_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders",
+                "body": {
+                  "item": "widget",
+                  "quantity": 2,
+                  "unit_price": "12.50",
+                  "intent_key": "customer-order-7"
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "id": 2,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": "customer-order-7",
+                "total": "25.00",
+                "status": "pending_payment"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 5,
+              "event_type": "tool",
+              "action": "evaluate_state",
+              "request": {
+                "method": "GET",
+                "path": "/evaluation"
+              },
+              "http_status": 200,
+              "response": {
+                "valid": false,
+                "orders_checked": 2,
+                "payments_checked": 0,
+                "violations": [
+                  {
+                    "code": "duplicate_orders_for_intent",
+                    "message": "Intent 'customer-order-7' has 2 orders; order_ids=[1, 2], reserved_quantity=4"
+                  }
+                ]
+              },
+              "error": null,
+              "decision": null
+            }
+          ],
+          "evaluation_evidence": {
+            "valid": false,
+            "orders_checked": null,
+            "payments_checked": null,
+            "successful_charge_count": 0,
+            "order_ids": [
+              1,
+              2
+            ],
+            "payment_ids": [],
+            "order_status": null,
+            "inventory_on_hand": 6,
+            "violations": [
+              {
+                "code": "duplicate_orders_for_intent",
+                "message": "Intent 'customer-order-7' has 2 orders; order_ids=[1, 2], reserved_quantity=4"
+              }
+            ],
+            "source": "persisted-state-evaluation",
+            "orders_checked_status": "unavailable",
+            "payments_checked_status": "unavailable"
+          }
+        },
+        {
+          "scenario": "duplicate_order_for_intent",
+          "mode": "deterministic",
+          "trial_index": 2,
+          "trial_id": "safe_deduplicated",
+          "outcome": "passed",
+          "error": null,
+          "turns": 5,
+          "successful_charges": 0,
+          "order_status": null,
+          "order_ids": [
+            1
+          ],
+          "inventory_on_hand": 8,
+          "payment_ids": [],
+          "violations": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "total_tokens": 0,
+            "responses": 0,
+            "with_usage": 0,
+            "missing_usage": 1,
+            "partial_usage": 0,
+            "status": "missing"
+          },
+          "trace": [
+            {
+              "sequence": 1,
+              "event_type": "tool",
+              "action": "set_inventory",
+              "request": {
+                "method": "POST",
+                "path": "/inventory",
+                "body": {
+                  "item": "widget",
+                  "quantity_on_hand": 10
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "item": "widget",
+                "quantity_on_hand": 10
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 2,
+              "event_type": "decision",
+              "action": "recovery_decision",
+              "request": null,
+              "http_status": null,
+              "response": null,
+              "error": null,
+              "decision": "Look up the intent key before creating an order."
+            },
+            {
+              "sequence": 3,
+              "event_type": "tool",
+              "action": "lookup_intent",
+              "request": {
+                "method": "GET",
+                "path": "/orders/by-intent-key/customer-order-7"
+              },
+              "http_status": 404,
+              "response": {
+                "detail": "No order for intent 'customer-order-7'"
+              },
+              "error": "No order for intent 'customer-order-7'",
+              "decision": null
+            },
+            {
+              "sequence": 4,
+              "event_type": "tool",
+              "action": "create_order",
+              "request": {
+                "method": "POST",
+                "path": "/orders",
+                "body": {
+                  "item": "widget",
+                  "quantity": 2,
+                  "unit_price": "12.50",
+                  "intent_key": "customer-order-7"
+                }
+              },
+              "http_status": 201,
+              "response": {
+                "id": 1,
+                "item": "widget",
+                "quantity": 2,
+                "unit_price": "12.50",
+                "intent_key": "customer-order-7",
+                "total": "25.00",
+                "status": "pending_payment"
+              },
+              "error": null,
+              "decision": null
+            },
+            {
+              "sequence": 5,
+              "event_type": "tool",
+              "action": "evaluate_state",
+              "request": {
+                "method": "GET",
+                "path": "/evaluation"
+              },
+              "http_status": 200,
+              "response": {
+                "valid": true,
+                "orders_checked": 1,
+                "payments_checked": 0,
+                "violations": []
+              },
+              "error": null,
+              "decision": null
+            }
+          ],
+          "evaluation_evidence": {
+            "valid": true,
+            "orders_checked": null,
+            "payments_checked": null,
+            "successful_charge_count": 0,
+            "order_ids": [
+              1
+            ],
+            "payment_ids": [],
+            "order_status": null,
+            "inventory_on_hand": 8,
+            "violations": [],
+            "source": "persisted-state-evaluation",
+            "orders_checked_status": "unavailable",
+            "payments_checked_status": "unavailable"
+          }
+        }
+      ]
+    }
+  ],
+  "cost_note": "cost_not_calculated (no reliable pricing data)"
+}

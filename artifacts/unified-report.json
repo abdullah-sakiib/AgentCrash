@@ -1,0 +1,154 @@
+{
+  "note": "offline unified report; no live calls; per-scenario invariants differ",
+  "scenarios_requested": 2,
+  "scenarios_completed": 2,
+  "aggregate": {
+    "scenarios_requested": 2,
+    "scenarios_completed": 2,
+    "trials_requested": 4,
+    "trials_completed": 4,
+    "passed": 4,
+    "pass_rate": 1.0,
+    "failed": 0,
+    "failure_rate": 0.0,
+    "errors": 0,
+    "error_rate": 0.0,
+    "violation_counts": {},
+    "total_input_tokens": 8565,
+    "total_output_tokens": 5021,
+    "total_tokens": 13586,
+    "total_responses": 10,
+    "scenarios_with_usage": 2,
+    "scenarios_partial_usage": 0,
+    "scenarios_missing_usage": 0,
+    "turns_total": 10
+  },
+  "scenarios": [
+    {
+      "source": "artifacts\\live-multi.json",
+      "kind": "payment_multi",
+      "scenario": "payment_timeout_after_commit",
+      "model": "muse-spark-1.3-contributor",
+      "trials_requested": 3,
+      "trials_completed": 3,
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "pass_rate": 1.0,
+      "turns_total": 6,
+      "successful_charges_total": 3,
+      "duplicate_charge_trials": 0,
+      "usage": {
+        "input_tokens": 4669,
+        "output_tokens": 2683,
+        "total_tokens": 7352,
+        "responses": 6,
+        "with_usage": 3,
+        "missing_usage": 0,
+        "partial_usage": 0,
+        "status": "complete"
+      },
+      "violation_counts": {},
+      "baselines": [
+        {
+          "strategy_name": "unsafe_retry",
+          "task_outcome": "failed",
+          "successful_charge_count": 2,
+          "violation_codes": [
+            "multiple_successful_charges_for_order"
+          ]
+        },
+        {
+          "strategy_name": "status_check",
+          "task_outcome": "passed",
+          "successful_charge_count": 1,
+          "violation_codes": []
+        }
+      ],
+      "trials": [
+        {
+          "trial_index": 1,
+          "trial_id": "payment_timeout_after_commit-trial-001",
+          "outcome": "passed",
+          "error": null,
+          "turns": 2,
+          "successful_charges": 1,
+          "violations": []
+        },
+        {
+          "trial_index": 2,
+          "trial_id": "payment_timeout_after_commit-trial-002",
+          "outcome": "passed",
+          "error": null,
+          "turns": 2,
+          "successful_charges": 1,
+          "violations": []
+        },
+        {
+          "trial_index": 3,
+          "trial_id": "payment_timeout_after_commit-trial-003",
+          "outcome": "passed",
+          "error": null,
+          "turns": 2,
+          "successful_charges": 1,
+          "violations": []
+        }
+      ],
+      "details": {
+        "per_trial_payment_ids": [
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "source": "artifacts\\live-fulfillment-trial.json",
+      "kind": "fulfillment_trial",
+      "scenario": "fulfill_before_payment",
+      "model": "muse-spark-1.3-contributor",
+      "trials_requested": 1,
+      "trials_completed": 1,
+      "passed": 1,
+      "failed": 0,
+      "errors": 0,
+      "pass_rate": 1.0,
+      "turns_total": 4,
+      "successful_charges_total": 1,
+      "duplicate_charge_trials": null,
+      "usage": {
+        "input_tokens": 3896,
+        "output_tokens": 2338,
+        "total_tokens": 6234,
+        "responses": 4,
+        "with_usage": 1,
+        "missing_usage": 0,
+        "partial_usage": 0,
+        "status": "complete"
+      },
+      "violation_counts": {},
+      "baselines": [],
+      "trials": [
+        {
+          "trial_index": 1,
+          "trial_id": null,
+          "outcome": "passed",
+          "error": null,
+          "turns": 4,
+          "successful_charges": 1,
+          "violations": []
+        }
+      ],
+      "details": {
+        "order_status": "fulfilled"
+      }
+    }
+  ],
+  "cost_note": "cost_not_calculated (no reliable pricing data)"
+}

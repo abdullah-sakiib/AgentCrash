@@ -1,0 +1,288 @@
+{
+  "scenario": "payment_timeout_after_commit",
+  "trial_count": 1,
+  "model": "muse-spark-1.3-contributor",
+  "task": {
+    "item": "widget",
+    "initial_stock": 10,
+    "quantity": 2,
+    "unit_price": "12.50",
+    "original_idempotency_key": "payment-timeout-original",
+    "retry_idempotency_key": "payment-timeout-retry",
+    "fault_mode": "timeout_after_commit"
+  },
+  "live_outcome": "passed",
+  "live_error": null,
+  "order_id": 1,
+  "payment_ids": [
+    1
+  ],
+  "successful_charge_count": 1,
+  "turns_used": 2,
+  "usage": {
+    "input_tokens": 1561,
+    "output_tokens": 935,
+    "total_tokens": 2496,
+    "responses": 2
+  },
+  "cost_note": "cost_not_calculated (no reliable pricing data)",
+  "invariant_violations": [],
+  "baselines": [
+    {
+      "strategy_name": "unsafe_retry",
+      "task_outcome": "failed",
+      "successful_charge_count": 2,
+      "violation_codes": [
+        "multiple_successful_charges_for_order"
+      ]
+    },
+    {
+      "strategy_name": "status_check",
+      "task_outcome": "passed",
+      "successful_charge_count": 1,
+      "violation_codes": []
+    }
+  ],
+  "trace": [
+    {
+      "sequence": 1,
+      "kind": "setup",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 201,
+      "usage": null,
+      "error": null,
+      "detail": "set_inventory"
+    },
+    {
+      "sequence": 2,
+      "kind": "setup",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 201,
+      "usage": null,
+      "error": null,
+      "detail": "create_order"
+    },
+    {
+      "sequence": 3,
+      "kind": "setup",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 504,
+      "usage": null,
+      "error": null,
+      "detail": "attempt_payment_timeout"
+    },
+    {
+      "sequence": 4,
+      "kind": "model_request",
+      "turn": 1,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": "Order 1 payment recovery. A charge with idempotency key 'payment-timeout-original' returned HTTP 504 timeout after commit and may already be recorded. Available tools: get_payment_status(idempotency_key), charge_payment(order_id, idempotency_key). Known order_id=1, original key='payment-timeout-original'. Decide the next step.",
+      "model_input": "Order 1 payment recovery. A charge with idempotency key 'payment-timeout-original' returned HTTP 504 timeout after commit and may already be recorded. Available tools: get_payment_status(idempotency_key), charge_payment(order_id, idempotency_key). Known order_id=1, original key='payment-timeout-original'. Decide the next step.",
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "text"
+    },
+    {
+      "sequence": 5,
+      "kind": "model_response",
+      "turn": 1,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": [
+          {
+            "name": "get_payment_status",
+            "call_id": "call_2a08a524-6f31-4991-ac97-7526b1e60ec5",
+            "arguments": {
+              "idempotency_key": "payment-timeout-original"
+            }
+          }
+        ]
+      },
+      "text": "Recovering your timed-out payment \u2014 I'll verify its status first to avoid a duplicate charge.",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 706,
+        "output_tokens": 549,
+        "total_tokens": 1255
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_call",
+      "turn": 1,
+      "tool_name": "get_payment_status",
+      "call_id": "call_2a08a524-6f31-4991-ac97-7526b1e60ec5",
+      "arguments": {
+        "idempotency_key": "payment-timeout-original"
+      },
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_result",
+      "turn": 1,
+      "tool_name": "get_payment_status",
+      "call_id": "call_2a08a524-6f31-4991-ac97-7526b1e60ec5",
+      "arguments": null,
+      "result": {
+        "id": 1,
+        "order_id": 1,
+        "idempotency_key": "payment-timeout-original",
+        "amount": "25.00",
+        "status": "succeeded"
+      },
+      "text": null,
+      "model_input": null,
+      "http_status": 200,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 8,
+      "kind": "model_request",
+      "turn": 2,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "history_blocks": 5
+      },
+      "text": null,
+      "model_input": [
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Order 1 payment recovery. A charge with idempotency key 'payment-timeout-original' returned HTTP 504 timeout after commit and may already be recorded. Available tools: get_payment_status(idempotency_key), charge_payment(order_id, idempotency_key). Known order_id=1, original key='payment-timeout-original'. Decide the next step."
+            }
+          ]
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae1cdb094bc765e42db4036:rs_051ddf48-0b61-4396-8223-d37c73177996",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_6ab3df97-b8eb-4e94-9e8f-ceef0ecee276",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Recovering your timed-out payment \u2014 I'll verify its status first to avoid a duplicate charge.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_2a08a524-6f31-4991-ac97-7526b1e60ec5",
+          "call_id": "call_2a08a524-6f31-4991-ac97-7526b1e60ec5",
+          "name": "get_payment_status",
+          "arguments": "{\"idempotency_key\":\"payment-timeout-original\"}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_2a08a524-6f31-4991-ac97-7526b1e60ec5",
+          "output": "{\"id\": 1, \"order_id\": 1, \"idempotency_key\": \"payment-timeout-original\", \"amount\": \"25.00\", \"status\": \"succeeded\"}"
+        }
+      ],
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "history"
+    },
+    {
+      "sequence": 9,
+      "kind": "model_response",
+      "turn": 2,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": []
+      },
+      "text": "Payment recovery complete for Order 1:\n\nChecked `get_payment_status(idempotency_key='payment-timeout-original')` and found:\n- status: **succeeded**\n- amount: 25.00\n\nThe original charge **did commit** despite the HTTP 504 timeout.\n\n**Next step: Do NOT call `charge_payment` again.** Retrying (with same or new key) would risk a duplicate charge. No further action needed.\n",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 855,
+        "output_tokens": 386,
+        "total_tokens": 1241
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 10,
+      "kind": "decision",
+      "turn": 2,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "model_done"
+    },
+    {
+      "sequence": 11,
+      "kind": "evaluation",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 200,
+      "usage": null,
+      "error": null,
+      "detail": null
+    }
+  ]
+}

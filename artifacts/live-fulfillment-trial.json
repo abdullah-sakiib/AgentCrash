@@ -1,0 +1,612 @@
+{
+  "scenario": "fulfill_before_payment",
+  "model": "muse-spark-1.3-contributor",
+  "task": {
+    "item": "widget",
+    "initial_stock": 10,
+    "quantity": 2,
+    "unit_price": "12.50",
+    "idempotency_key": "fulfillment-payment"
+  },
+  "task_outcome": "passed",
+  "trial_error": null,
+  "order_id": 1,
+  "order_status": "fulfilled",
+  "payment_ids": [
+    1
+  ],
+  "successful_charge_count": 1,
+  "invariant_violations": [],
+  "turns_used": 4,
+  "usage": {
+    "input_tokens": 3896,
+    "output_tokens": 2338,
+    "total_tokens": 6234,
+    "responses": 4
+  },
+  "cost_note": "cost_not_calculated (no reliable pricing data)",
+  "trace": [
+    {
+      "sequence": 1,
+      "kind": "setup",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 201,
+      "usage": null,
+      "error": null,
+      "detail": "set_inventory"
+    },
+    {
+      "sequence": 2,
+      "kind": "setup",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 201,
+      "usage": null,
+      "error": null,
+      "detail": "create_order"
+    },
+    {
+      "sequence": 3,
+      "kind": "model_request",
+      "turn": 1,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": "Process order 1: 2 x 'widget'. The order is pending and its stock has been reserved. Process the order correctly and fulfill it only when the required payment condition is satisfied. Available tools: get_payment_status(idempotency_key), charge_payment(order_id, idempotency_key), fulfill_order(order_id). Known order_id=1. Decide the next step.",
+      "model_input": "Process order 1: 2 x 'widget'. The order is pending and its stock has been reserved. Process the order correctly and fulfill it only when the required payment condition is satisfied. Available tools: get_payment_status(idempotency_key), charge_payment(order_id, idempotency_key), fulfill_order(order_id). Known order_id=1. Decide the next step.",
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "text"
+    },
+    {
+      "sequence": 4,
+      "kind": "model_response",
+      "turn": 1,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": [
+          {
+            "name": "get_payment_status",
+            "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+            "arguments": {
+              "idempotency_key": "order-1"
+            }
+          }
+        ]
+      },
+      "text": "I'll check the payment status for order 1 before proceeding.",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 779,
+        "output_tokens": 1552,
+        "total_tokens": 2331
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 5,
+      "kind": "tool_call",
+      "turn": 1,
+      "tool_name": "get_payment_status",
+      "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+      "arguments": {
+        "idempotency_key": "order-1"
+      },
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_result",
+      "turn": 1,
+      "tool_name": "get_payment_status",
+      "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+      "arguments": null,
+      "result": {
+        "error": "not_found",
+        "http_status": 404
+      },
+      "text": null,
+      "model_input": null,
+      "http_status": 404,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 7,
+      "kind": "model_request",
+      "turn": 2,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "history_blocks": 5
+      },
+      "text": null,
+      "model_input": [
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Process order 1: 2 x 'widget'. The order is pending and its stock has been reserved. Process the order correctly and fulfill it only when the required payment condition is satisfied. Available tools: get_payment_status(idempotency_key), charge_payment(order_id, idempotency_key), fulfill_order(order_id). Known order_id=1. Decide the next step."
+            }
+          ]
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae209db1feac25fe9d74dd2:rs_55a5651f-832c-4961-9649-276e240493c0",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_455efffc-74e2-4e0e-8727-6b828b549cb3",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "I'll check the payment status for order 1 before proceeding.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "name": "get_payment_status",
+          "arguments": "{\"idempotency_key\":\"order-1\"}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "output": "{\"error\": \"not_found\", \"http_status\": 404}"
+        }
+      ],
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "history"
+    },
+    {
+      "sequence": 8,
+      "kind": "model_response",
+      "turn": 2,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": [
+          {
+            "name": "charge_payment",
+            "call_id": "call_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+            "arguments": {
+              "idempotency_key": "order-1",
+              "order_id": 1
+            }
+          }
+        ]
+      },
+      "text": "Payment not found, so I'll charge order 1 now.",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 895,
+        "output_tokens": 460,
+        "total_tokens": 1355
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 9,
+      "kind": "tool_call",
+      "turn": 2,
+      "tool_name": "charge_payment",
+      "call_id": "call_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+      "arguments": {
+        "order_id": 1,
+        "idempotency_key": "order-1"
+      },
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 10,
+      "kind": "tool_result",
+      "turn": 2,
+      "tool_name": "charge_payment",
+      "call_id": "call_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+      "arguments": null,
+      "result": {
+        "id": 1,
+        "order_id": 1,
+        "idempotency_key": "order-1",
+        "amount": "25.00",
+        "status": "succeeded",
+        "replayed": false
+      },
+      "text": null,
+      "model_input": null,
+      "http_status": 200,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 11,
+      "kind": "model_request",
+      "turn": 3,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "history_blocks": 9
+      },
+      "text": null,
+      "model_input": [
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Process order 1: 2 x 'widget'. The order is pending and its stock has been reserved. Process the order correctly and fulfill it only when the required payment condition is satisfied. Available tools: get_payment_status(idempotency_key), charge_payment(order_id, idempotency_key), fulfill_order(order_id). Known order_id=1. Decide the next step."
+            }
+          ]
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae209db1feac25fe9d74dd2:rs_55a5651f-832c-4961-9649-276e240493c0",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_455efffc-74e2-4e0e-8727-6b828b549cb3",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "I'll check the payment status for order 1 before proceeding.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "name": "get_payment_status",
+          "arguments": "{\"idempotency_key\":\"order-1\"}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "output": "{\"error\": \"not_found\", \"http_status\": 404}"
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae209e24f04175e981f4466:rs_048dd098-16eb-4588-9ccf-d146149c2cc0",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_a2c02d61-0cfe-4307-85fa-1d58f06cda00",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Payment not found, so I'll charge order 1 now.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+          "call_id": "call_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+          "name": "charge_payment",
+          "arguments": "{\"idempotency_key\":\"order-1\",\"order_id\":1}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+          "output": "{\"id\": 1, \"order_id\": 1, \"idempotency_key\": \"order-1\", \"amount\": \"25.00\", \"status\": \"succeeded\", \"replayed\": false}"
+        }
+      ],
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "history"
+    },
+    {
+      "sequence": 12,
+      "kind": "model_response",
+      "turn": 3,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": [
+          {
+            "name": "fulfill_order",
+            "call_id": "call_a4704970-d561-4d64-8e5d-8b092c00ff4c",
+            "arguments": {
+              "order_id": 1
+            }
+          }
+        ]
+      },
+      "text": "Payment succeeded. I'll fulfill the order now.",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 1057,
+        "output_tokens": 162,
+        "total_tokens": 1219
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 13,
+      "kind": "tool_call",
+      "turn": 3,
+      "tool_name": "fulfill_order",
+      "call_id": "call_a4704970-d561-4d64-8e5d-8b092c00ff4c",
+      "arguments": {
+        "order_id": 1
+      },
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 14,
+      "kind": "tool_result",
+      "turn": 3,
+      "tool_name": "fulfill_order",
+      "call_id": "call_a4704970-d561-4d64-8e5d-8b092c00ff4c",
+      "arguments": null,
+      "result": {
+        "id": 1,
+        "status": "fulfilled"
+      },
+      "text": null,
+      "model_input": null,
+      "http_status": 200,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 15,
+      "kind": "model_request",
+      "turn": 4,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "history_blocks": 13
+      },
+      "text": null,
+      "model_input": [
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Process order 1: 2 x 'widget'. The order is pending and its stock has been reserved. Process the order correctly and fulfill it only when the required payment condition is satisfied. Available tools: get_payment_status(idempotency_key), charge_payment(order_id, idempotency_key), fulfill_order(order_id). Known order_id=1. Decide the next step."
+            }
+          ]
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae209db1feac25fe9d74dd2:rs_55a5651f-832c-4961-9649-276e240493c0",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_455efffc-74e2-4e0e-8727-6b828b549cb3",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "I'll check the payment status for order 1 before proceeding.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "name": "get_payment_status",
+          "arguments": "{\"idempotency_key\":\"order-1\"}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_031e05cd-bdcc-4a54-a3bb-5eab6c461b0d",
+          "output": "{\"error\": \"not_found\", \"http_status\": 404}"
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae209e24f04175e981f4466:rs_048dd098-16eb-4588-9ccf-d146149c2cc0",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_a2c02d61-0cfe-4307-85fa-1d58f06cda00",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Payment not found, so I'll charge order 1 now.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+          "call_id": "call_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+          "name": "charge_payment",
+          "arguments": "{\"idempotency_key\":\"order-1\",\"order_id\":1}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_cba13b45-8190-4af9-81df-8b77b49bc0d6",
+          "output": "{\"id\": 1, \"order_id\": 1, \"idempotency_key\": \"order-1\", \"amount\": \"25.00\", \"status\": \"succeeded\", \"replayed\": false}"
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae209e883193dee68b946e6:rs_7f1be3aa-8129-4c0a-a483-f84eb3dc04d2",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_3bc3cc9d-306b-49be-807f-2d5ade863232",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Payment succeeded. I'll fulfill the order now.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_a4704970-d561-4d64-8e5d-8b092c00ff4c",
+          "call_id": "call_a4704970-d561-4d64-8e5d-8b092c00ff4c",
+          "name": "fulfill_order",
+          "arguments": "{\"order_id\":1}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_a4704970-d561-4d64-8e5d-8b092c00ff4c",
+          "output": "{\"id\": 1, \"status\": \"fulfilled\"}"
+        }
+      ],
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "history"
+    },
+    {
+      "sequence": 16,
+      "kind": "model_response",
+      "turn": 4,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": []
+      },
+      "text": "Order 1 processed successfully:\n\n1. Checked payment status with `get_payment_status(order-1)` \u2192 not_found (no payment yet).\n2. Charged payment with `charge_payment(order_id=1, idempotency_key=order-1)` \u2192 status `succeeded`, amount 25.00.\n3. Payment condition satisfied, so fulfilled with `fulfill_order(order_id=1)` \u2192 status `fulfilled`.\n\nOrder 1 (2 x 'widget') is now fulfilled.",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 1165,
+        "output_tokens": 164,
+        "total_tokens": 1329
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 17,
+      "kind": "decision",
+      "turn": 4,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "model_done"
+    },
+    {
+      "sequence": 18,
+      "kind": "evaluation",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 200,
+      "usage": null,
+      "error": null,
+      "detail": null
+    }
+  ]
+}

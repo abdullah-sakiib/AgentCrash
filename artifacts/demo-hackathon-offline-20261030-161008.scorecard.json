@@ -1,0 +1,320 @@
+{
+  "scorecard_version": 1,
+  "scope": {
+    "scenarios": [
+      "duplicate_order_for_intent",
+      "fulfill_before_payment",
+      "payment_timeout_after_commit"
+    ],
+    "modes": [
+      "deterministic"
+    ],
+    "model": null,
+    "strategy_id": null
+  },
+  "scopes": [
+    {
+      "scenario": "payment_timeout_after_commit",
+      "mode": "deterministic",
+      "model": null,
+      "strategy_id": null,
+      "fault": {
+        "fault_type": "timeout",
+        "target": "payment.create",
+        "point": "after_commit"
+      },
+      "trial_counts": {
+        "requested": 2,
+        "completed": 2,
+        "evaluable": 2,
+        "errored": 0,
+        "unknown_completion": 0,
+        "inconsistent_evidence": 0
+      },
+      "recovery_success_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "passed + evaluated + completion-evidenced trials over evaluable trials with known completion"
+      },
+      "task_pass_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "passed trials over completed trials (legacy-compatible)"
+      },
+      "invariant_violation_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "trials with >=1 violation over evaluable trials"
+      },
+      "infrastructure_error_rate": {
+        "value": 0.0,
+        "numerator": 0,
+        "denominator": 2,
+        "definition": "errored trials over completed trials"
+      },
+      "duplicate_charge_trial_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "trials with duplicate-charge evidence over evaluable trials",
+        "total_duplicate_charges": 1,
+        "applicable": true
+      },
+      "duplicate_order_trial_rate": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "definition": "trials with duplicate-order evidence over evaluable trials",
+        "total_duplicate_orders": null,
+        "applicable": false
+      },
+      "passed_without_completion_evidence": 0,
+      "passed_with_unknown_completion": 0,
+      "unevaluable_trials": 0,
+      "violations_by_code": {
+        "multiple_successful_charges_for_order": 1
+      },
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "responses": 0,
+        "status": "missing",
+        "trials_with_usage": 0,
+        "trials_partial_usage": 0,
+        "trials_missing_usage": 2
+      },
+      "cost": "cost_not_calculated (no reliable pricing data)",
+      "turns_total": 13,
+      "tool_calls": {
+        "total": 0,
+        "mean_per_evaluable_trial": null,
+        "trials_with_tool_call_traces": 0
+      },
+      "model_responses": {
+        "total": 0,
+        "trials_with_response_traces": 0
+      }
+    },
+    {
+      "scenario": "fulfill_before_payment",
+      "mode": "deterministic",
+      "model": null,
+      "strategy_id": null,
+      "reported_as": "fulfill_without_payment",
+      "fault": {
+        "fault_type": "none"
+      },
+      "trial_counts": {
+        "requested": 2,
+        "completed": 2,
+        "evaluable": 2,
+        "errored": 0,
+        "unknown_completion": 0,
+        "inconsistent_evidence": 0
+      },
+      "recovery_success_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "passed + evaluated + completion-evidenced trials over evaluable trials with known completion"
+      },
+      "task_pass_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "passed trials over completed trials (legacy-compatible)"
+      },
+      "invariant_violation_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "trials with >=1 violation over evaluable trials"
+      },
+      "infrastructure_error_rate": {
+        "value": 0.0,
+        "numerator": 0,
+        "denominator": 2,
+        "definition": "errored trials over completed trials"
+      },
+      "duplicate_charge_trial_rate": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "definition": "trials with duplicate-charge evidence over evaluable trials",
+        "total_duplicate_charges": null,
+        "applicable": false
+      },
+      "duplicate_order_trial_rate": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "definition": "trials with duplicate-order evidence over evaluable trials",
+        "total_duplicate_orders": null,
+        "applicable": false
+      },
+      "passed_without_completion_evidence": 0,
+      "passed_with_unknown_completion": 0,
+      "unevaluable_trials": 0,
+      "violations_by_code": {
+        "fulfilled_without_payment": 1
+      },
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "responses": 0,
+        "status": "missing",
+        "trials_with_usage": 0,
+        "trials_partial_usage": 0,
+        "trials_missing_usage": 2
+      },
+      "cost": "cost_not_calculated (no reliable pricing data)",
+      "turns_total": 11,
+      "tool_calls": {
+        "total": 0,
+        "mean_per_evaluable_trial": null,
+        "trials_with_tool_call_traces": 0
+      },
+      "model_responses": {
+        "total": 0,
+        "trials_with_response_traces": 0
+      }
+    },
+    {
+      "scenario": "duplicate_order_for_intent",
+      "mode": "deterministic",
+      "model": null,
+      "strategy_id": null,
+      "fault": {
+        "fault_type": "none"
+      },
+      "trial_counts": {
+        "requested": 2,
+        "completed": 2,
+        "evaluable": 2,
+        "errored": 0,
+        "unknown_completion": 0,
+        "inconsistent_evidence": 0
+      },
+      "recovery_success_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "passed + evaluated + completion-evidenced trials over evaluable trials with known completion"
+      },
+      "task_pass_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "passed trials over completed trials (legacy-compatible)"
+      },
+      "invariant_violation_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "trials with >=1 violation over evaluable trials"
+      },
+      "infrastructure_error_rate": {
+        "value": 0.0,
+        "numerator": 0,
+        "denominator": 2,
+        "definition": "errored trials over completed trials"
+      },
+      "duplicate_charge_trial_rate": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "definition": "trials with duplicate-charge evidence over evaluable trials",
+        "total_duplicate_charges": null,
+        "applicable": false
+      },
+      "duplicate_order_trial_rate": {
+        "value": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+        "definition": "trials with duplicate-order evidence over evaluable trials",
+        "total_duplicate_orders": 1,
+        "applicable": true
+      },
+      "passed_without_completion_evidence": 0,
+      "passed_with_unknown_completion": 0,
+      "unevaluable_trials": 0,
+      "violations_by_code": {
+        "duplicate_orders_for_intent": 1
+      },
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "responses": 0,
+        "status": "missing",
+        "trials_with_usage": 0,
+        "trials_partial_usage": 0,
+        "trials_missing_usage": 2
+      },
+      "cost": "cost_not_calculated (no reliable pricing data)",
+      "turns_total": 10,
+      "tool_calls": {
+        "total": 0,
+        "mean_per_evaluable_trial": null,
+        "trials_with_tool_call_traces": 0
+      },
+      "model_responses": {
+        "total": 0,
+        "trials_with_response_traces": 0
+      }
+    }
+  ],
+  "overall": {
+    "trials_requested": 6,
+    "trials_completed": 6,
+    "trials_evaluable": 6,
+    "trials_errored": 0,
+    "recovery_success_rate": {
+      "value": 0.5,
+      "numerator": 3,
+      "denominator": 6
+    },
+    "task_pass_rate": {
+      "value": 0.5,
+      "numerator": 3,
+      "denominator": 6
+    },
+    "invariant_violation_rate": {
+      "value": 0.5,
+      "numerator": 3,
+      "denominator": 6
+    },
+    "infrastructure_error_rate": {
+      "value": 0.0,
+      "numerator": 0,
+      "denominator": 6
+    },
+    "violations_by_code": {
+      "duplicate_orders_for_intent": 1,
+      "fulfilled_without_payment": 1,
+      "multiple_successful_charges_for_order": 1
+    },
+    "violations_by_scenario": {
+      "payment_timeout_after_commit": {
+        "multiple_successful_charges_for_order": 1
+      },
+      "fulfill_before_payment": {
+        "fulfilled_without_payment": 1
+      },
+      "duplicate_order_for_intent": {
+        "duplicate_orders_for_intent": 1
+      }
+    }
+  },
+  "cost_note": "cost_not_calculated (no reliable pricing data)",
+  "generated_from": {
+    "source": "D:\\agentcrash\\artifacts\\demo-hackathon-offline-20261030-161008.json",
+    "input_kind": "orchestrated_run",
+    "scorecard_module": "agentcrash.experiments.scorecard"
+  }
+}

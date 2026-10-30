@@ -1,0 +1,404 @@
+{
+  "scenario": "duplicate_order_for_intent",
+  "model": "muse-spark-1.3-contributor",
+  "task": {
+    "item": "widget",
+    "initial_stock": 10,
+    "quantity": 2,
+    "unit_price": "12.50",
+    "intent_key": "customer-order-7"
+  },
+  "task_outcome": "passed",
+  "trial_error": null,
+  "order_ids": [
+    1
+  ],
+  "inventory_on_hand": 8,
+  "invariant_violations": [],
+  "turns_used": 3,
+  "usage": {
+    "input_tokens": 2561,
+    "output_tokens": 1377,
+    "total_tokens": 3938,
+    "responses": 3
+  },
+  "cost_note": "cost_not_calculated (no reliable pricing data)",
+  "trace": [
+    {
+      "sequence": 1,
+      "kind": "setup",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 201,
+      "usage": null,
+      "error": null,
+      "detail": "set_inventory"
+    },
+    {
+      "sequence": 2,
+      "kind": "model_request",
+      "turn": 1,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": "Process one customer intent 'customer-order-7': 2 x 'widget' at 12.50 each. Record exactly one order for this intent and reserve stock once. Available tools: lookup_orders(intent_key), create_order(item, quantity, unit_price, intent_key). Known intent_key='customer-order-7'. Decide the next step.",
+      "model_input": "Process one customer intent 'customer-order-7': 2 x 'widget' at 12.50 each. Record exactly one order for this intent and reserve stock once. Available tools: lookup_orders(intent_key), create_order(item, quantity, unit_price, intent_key). Known intent_key='customer-order-7'. Decide the next step.",
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "text"
+    },
+    {
+      "sequence": 3,
+      "kind": "model_response",
+      "turn": 1,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": [
+          {
+            "name": "lookup_orders",
+            "call_id": "call_66e3aa5d-8391-42ef-b754-6ee95b720317",
+            "arguments": {
+              "intent_key": "customer-order-7"
+            }
+          }
+        ]
+      },
+      "text": "I'll verify the current order status to prevent duplication.",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 723,
+        "output_tokens": 526,
+        "total_tokens": 1249
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_call",
+      "turn": 1,
+      "tool_name": "lookup_orders",
+      "call_id": "call_66e3aa5d-8391-42ef-b754-6ee95b720317",
+      "arguments": {
+        "intent_key": "customer-order-7"
+      },
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 5,
+      "kind": "tool_result",
+      "turn": 1,
+      "tool_name": "lookup_orders",
+      "call_id": "call_66e3aa5d-8391-42ef-b754-6ee95b720317",
+      "arguments": null,
+      "result": {
+        "found": false,
+        "http_status": 404
+      },
+      "text": null,
+      "model_input": null,
+      "http_status": 404,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 6,
+      "kind": "model_request",
+      "turn": 2,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "history_blocks": 5
+      },
+      "text": null,
+      "model_input": [
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Process one customer intent 'customer-order-7': 2 x 'widget' at 12.50 each. Record exactly one order for this intent and reserve stock once. Available tools: lookup_orders(intent_key), create_order(item, quantity, unit_price, intent_key). Known intent_key='customer-order-7'. Decide the next step."
+            }
+          ]
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae215cdeb7478157a3d4e16:rs_2a20ff77-0007-46c4-a9e2-33cc9570b4e5",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_89b10297-b9fb-47e0-ab90-9ea775af4f65",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "I'll verify the current order status to prevent duplication.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_66e3aa5d-8391-42ef-b754-6ee95b720317",
+          "call_id": "call_66e3aa5d-8391-42ef-b754-6ee95b720317",
+          "name": "lookup_orders",
+          "arguments": "{\"intent_key\":\"customer-order-7\"}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_66e3aa5d-8391-42ef-b754-6ee95b720317",
+          "output": "{\"found\": false, \"http_status\": 404}"
+        }
+      ],
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "history"
+    },
+    {
+      "sequence": 7,
+      "kind": "model_response",
+      "turn": 2,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": [
+          {
+            "name": "create_order",
+            "call_id": "call_1b2511a4-32dd-497d-abb7-8fd40ed8423f",
+            "arguments": {
+              "intent_key": "customer-order-7",
+              "item": "widget",
+              "quantity": 2,
+              "unit_price": "12.50"
+            }
+          }
+        ]
+      },
+      "text": "No existing order found, so I'll create the requested order now.",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 830,
+        "output_tokens": 498,
+        "total_tokens": 1328
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 8,
+      "kind": "tool_call",
+      "turn": 2,
+      "tool_name": "create_order",
+      "call_id": "call_1b2511a4-32dd-497d-abb7-8fd40ed8423f",
+      "arguments": {
+        "item": "widget",
+        "quantity": 2,
+        "unit_price": "12.50",
+        "intent_key": "customer-order-7"
+      },
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 9,
+      "kind": "tool_result",
+      "turn": 2,
+      "tool_name": "create_order",
+      "call_id": "call_1b2511a4-32dd-497d-abb7-8fd40ed8423f",
+      "arguments": null,
+      "result": {
+        "id": 1,
+        "item": "widget",
+        "quantity": 2,
+        "status": "pending_payment",
+        "intent_key": "customer-order-7"
+      },
+      "text": null,
+      "model_input": null,
+      "http_status": 201,
+      "usage": null,
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 10,
+      "kind": "model_request",
+      "turn": 3,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "history_blocks": 9
+      },
+      "text": null,
+      "model_input": [
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Process one customer intent 'customer-order-7': 2 x 'widget' at 12.50 each. Record exactly one order for this intent and reserve stock once. Available tools: lookup_orders(intent_key), create_order(item, quantity, unit_price, intent_key). Known intent_key='customer-order-7'. Decide the next step."
+            }
+          ]
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae215cdeb7478157a3d4e16:rs_2a20ff77-0007-46c4-a9e2-33cc9570b4e5",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_89b10297-b9fb-47e0-ab90-9ea775af4f65",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "I'll verify the current order status to prevent duplication.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_66e3aa5d-8391-42ef-b754-6ee95b720317",
+          "call_id": "call_66e3aa5d-8391-42ef-b754-6ee95b720317",
+          "name": "lookup_orders",
+          "arguments": "{\"intent_key\":\"customer-order-7\"}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_66e3aa5d-8391-42ef-b754-6ee95b720317",
+          "output": "{\"found\": false, \"http_status\": 404}"
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_6ae215d4941df17a49924b6d:rs_fe8d7669-e177-4679-8871-5e6922745b00",
+          "summary": [],
+          "status": "completed"
+        },
+        {
+          "type": "message",
+          "id": "rs_a21dac6f-c69a-4912-a440-ce626059241e",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "No existing order found, so I'll create the requested order now.",
+              "annotations": [],
+              "logprobs": []
+            }
+          ],
+          "phase": "commentary",
+          "status": "completed"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_1b2511a4-32dd-497d-abb7-8fd40ed8423f",
+          "call_id": "call_1b2511a4-32dd-497d-abb7-8fd40ed8423f",
+          "name": "create_order",
+          "arguments": "{\"intent_key\":\"customer-order-7\",\"item\":\"widget\",\"quantity\":2,\"unit_price\":\"12.50\"}",
+          "status": "completed"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_1b2511a4-32dd-497d-abb7-8fd40ed8423f",
+          "output": "{\"id\": 1, \"item\": \"widget\", \"quantity\": 2, \"status\": \"pending_payment\", \"intent_key\": \"customer-order-7\"}"
+        }
+      ],
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "history"
+    },
+    {
+      "sequence": 11,
+      "kind": "model_response",
+      "turn": 3,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": {
+        "tool_calls": []
+      },
+      "text": "Task complete for intent_key='customer-order-7':\n\n- Checked `lookup_orders`: no existing order found (404).\n- Created order: id=1, 2 x 'widget' at 12.50 each, status pending_payment.\n\nExactly one order recorded, stock reserved once. No further action needed \u2014 do NOT create another order to avoid duplication.",
+      "model_input": null,
+      "http_status": null,
+      "usage": {
+        "input_tokens": 1008,
+        "output_tokens": 353,
+        "total_tokens": 1361
+      },
+      "error": null,
+      "detail": null
+    },
+    {
+      "sequence": 12,
+      "kind": "decision",
+      "turn": 3,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": null,
+      "usage": null,
+      "error": null,
+      "detail": "model_done"
+    },
+    {
+      "sequence": 13,
+      "kind": "evaluation",
+      "turn": null,
+      "tool_name": null,
+      "call_id": null,
+      "arguments": null,
+      "result": null,
+      "text": null,
+      "model_input": null,
+      "http_status": 200,
+      "usage": null,
+      "error": null,
+      "detail": null
+    }
+  ]
+}
